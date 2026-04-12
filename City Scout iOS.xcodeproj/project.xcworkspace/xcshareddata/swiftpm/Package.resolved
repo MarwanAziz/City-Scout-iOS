@@ -1,0 +1,33 @@
+{
+  "originHash" : "344cc48f09c81dec89dd87a1a1e26eb0379f2e61cf23f435bc6cf69c225b15f1",
+  "pins" : [
+    {
+      "identity" : "cityscoutshared",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MarwanAziz/CityScoutShared.git",
+      "state" : {
+        "revision" : "d3ab7c45b661d5bb096e01f8884985aab373fe90",
+        "version" : "1.0.3"
+      }
+    },
+    {
+      "identity" : "kmp-nativecoroutines",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rickclephas/KMP-NativeCoroutines.git",
+      "state" : {
+        "revision" : "fce8c8d25b874b2038be81bb3ba5cc51af1a976f",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift.git",
+      "state" : {
+        "revision" : "132aea4f236ccadc51590b38af0357a331d51fa2",
+        "version" : "6.10.2"
+      }
+    }
+  ],
+  "version" : 3
+}

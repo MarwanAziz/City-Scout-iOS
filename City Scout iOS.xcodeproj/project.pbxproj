@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BA5966472F8BD7BA00BFB75F /* SharedResources in Frameworks */ = {isa = PBXBuildFile; productRef = BA5966462F8BD7BA00BFB75F /* SharedResources */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		BA59661C2F8BD3D200BFB75F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +31,7 @@
 		BA59660E2F8BD3D100BFB75F /* City Scout iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "City Scout iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA59661B2F8BD3D200BFB75F /* City Scout iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "City Scout iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA5966252F8BD3D200BFB75F /* City Scout iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "City Scout iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA5966382F8BD54D00BFB75F /* CityScoutLibraries */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CityScoutLibraries; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -52,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA5966472F8BD7BA00BFB75F /* SharedResources in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,9 +81,11 @@
 		BA5966052F8BD3D100BFB75F = {
 			isa = PBXGroup;
 			children = (
+				BA5966382F8BD54D00BFB75F /* CityScoutLibraries */,
 				BA5966102F8BD3D100BFB75F /* City Scout iOS */,
 				BA59661E2F8BD3D200BFB75F /* City Scout iOSTests */,
 				BA5966282F8BD3D200BFB75F /* City Scout iOSUITests */,
+				BA5966452F8BD7BA00BFB75F /* Frameworks */,
 				BA59660F2F8BD3D100BFB75F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +98,13 @@
 				BA5966252F8BD3D200BFB75F /* City Scout iOSUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		BA5966452F8BD7BA00BFB75F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +127,7 @@
 			);
 			name = "City Scout iOS";
 			packageProductDependencies = (
+				BA5966462F8BD7BA00BFB75F /* SharedResources */,
 			);
 			productName = "City Scout iOS";
 			productReference = BA59660E2F8BD3D100BFB75F /* City Scout iOS.app */;
@@ -617,6 +633,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BA5966462F8BD7BA00BFB75F /* SharedResources */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SharedResources;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BA5966062F8BD3D100BFB75F /* Project object */;
 }
