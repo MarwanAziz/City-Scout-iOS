@@ -56,6 +56,7 @@ class CitySearchViewModelWrapper: ObservableObject {
     }
     let publisher = createPublisher(for: viewModel.searchError)
     publisher
+      .dropFirst()
       .subscribe(on: DispatchQueue.global(qos: .background))
       .receive(on: DispatchQueue.main)
       .sink(
