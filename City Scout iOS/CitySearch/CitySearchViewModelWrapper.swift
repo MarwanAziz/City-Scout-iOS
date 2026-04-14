@@ -5,122 +5,124 @@
 //  Created by Marwan Aziz on 12/04/2026.
 //
 
-import SwiftUI
+import Foundation
 import SharedResources
 import CityScoutShared
-internal import Combine
 import KMPNativeCoroutinesAsync
-import KMPNativeCoroutinesCombine
+import Combine
 
-class CitySearchViewModelWrapper: ObservableObject {
+@MainActor
+struct SearchCityViewState: Equatable {
+  var query: String = ""
+  var searchResults: [SearchCityResult] = []
+  var isLoading: Bool = false
+  var errorMessage: String? = nil
+}
+
+@MainActor
+final class SearchCityStore: ObservableObject {
+  typealias ViewModelFactory = () throws -> SearchCityViewModel
+
+  @Published private(set) var state = SearchCityViewState()
+
   private var viewModel: SearchCityViewModel?
-  @Published var searchResults: [SearchCityResult] = []
-  @Published var isLoading: Bool = false
-  @Published var isError: String? = nil
-  @Published var searchText: String = ""
-  private var cancellables: Set<AnyCancellable> = []
+  private var observationTasks: [Task<Void, Never>] = []
+  private var searchTask: Task<Void, Never>?
 
-  fileprivate func initialiseViewModel() {
-    let resources = SharedResources.shared
-    resources
-      .initialise(
-        rapidApiKey: "68999f7a20mshffaf2134c1e9edfp17598ejsn31fb20bd0572",
-        weatherApiKey: "e5a0ae782b414ae7b9000554260404"
-      )
-    
-    viewModel = try? resources.createSearchCityViewModel()
+  convenience init() {
+    self.init(viewModelFactory: { try shareResource.createSearchCityViewModel() })
   }
 
-  fileprivate func observeIsLoading() {
-    guard let viewModel else {
-      fatalError("SearchCityViewModel is nil")
+  init(viewModelFactory: @escaping ViewModelFactory) {
+    configureViewModel(with: viewModelFactory)
+    observeFlows()
+  }
+
+  private func configureViewModel(with factory: ViewModelFactory) {
+    do {
+      viewModel = try factory()
+    } catch {
+      state.errorMessage = "Missing or invalid app configuration."
     }
-    let publisher = createPublisher(for: viewModel.loading)
-    publisher
-      .subscribe(on: DispatchQueue.global(qos: .background))
-      .receive(on: DispatchQueue.main)
-      .sink(
-        receiveCompletion: { completion in
-          print("publisher completed: \(completion)")
-        },
-        receiveValue: {[weak self] loading in
-          self?.isLoading = loading.boolValue
-        }
-      )
-      .store(in: &cancellables)
   }
 
-  fileprivate func observeError() {
-    guard let viewModel else {
-      fatalError("SearchCityViewModel is nil")
+  func setQuery(_ query: String) {
+    guard state.isLoading == false else { return }
+    state.query = query
+    searchTask?.cancel()
+
+    let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+
+    guard !trimmedQuery.isEmpty else {
+      state.searchResults = []
+      state.errorMessage = nil
+      return
     }
-    let publisher = createPublisher(for: viewModel.searchError)
-    publisher
-      .dropFirst()
-      .subscribe(on: DispatchQueue.global(qos: .background))
-      .receive(on: DispatchQueue.main)
-      .sink(
-        receiveCompletion: { completion in
-          print("publisher completed: \(completion)")
-        },
-        receiveValue: {[weak self] error in
-          self?.isError = error.isEmpty ? nil : error
-        }
-      )
-      .store(in: &cancellables)
-  }
 
-  fileprivate func observeSearchResults() {
-    guard let viewModel else {
-      fatalError("SearchCityViewModel is nil")
+    searchTask = Task { [weak self] in
+      await self?.performSearch(with: trimmedQuery)
     }
-    let publisher = createPublisher(for: viewModel.searchCityResult)
-    publisher
-      .subscribe(on: DispatchQueue.global(qos: .background))
-      .receive(on: DispatchQueue.main)
-      .sink(
-        receiveCompletion: { completion in
-          print("publisher completed: \(completion)")
-        },
-        receiveValue: {[weak self] cities in
-          self?.searchResults = cities
-        }
-      )
-      .store(in: &cancellables)
   }
 
-  fileprivate func observeSearch() {
-    $searchText
-      .subscribe(
-        on: DispatchQueue.global(qos: .background)
-      )
-      .receive(
-        on: DispatchQueue.global(qos: .background)
-      )
-      .sink(
-        receiveCompletion: { completed in
+  func retrySearch() {
+    setQuery(state.query)
+  }
 
-      }, receiveValue: {[weak self] value in
-        Task {
-          guard let self, let viewModel = self.viewModel else {
-            return
+  private func performSearch(with query: String) async {
+    guard let viewModel else {
+      state.errorMessage = "Search is currently unavailable."
+      return
+    }
+
+    do {
+      try await asyncFunction(for: viewModel.searchCity(city: query))
+    } catch {
+      state.errorMessage = error.localizedDescription
+    }
+  }
+
+  private func observeFlows() {
+    guard let viewModel else { return }
+
+    observationTasks.append(
+      Task { [weak self] in
+        do {
+          for try await loading in asyncSequence(for: viewModel.loading) {
+            self?.state.isLoading = loading.boolValue
           }
-          try? await asyncFunction(
-            for: viewModel.searchCity(
-              city: value
-            )
-          )
+        } catch {
+          // KMP flow observation ended unexpectedly.
         }
       }
-      ).store(in: &cancellables)
+    )
 
+    observationTasks.append(
+      Task { [weak self] in
+        do {
+          for try await error in asyncSequence(for: viewModel.searchError) {
+            self?.state.errorMessage = error.isEmpty ? nil : error
+          }
+        } catch {
+          // KMP flow observation ended unexpectedly.
+        }
+      }
+    )
+
+    observationTasks.append(
+      Task { [weak self] in
+        do {
+          for try await cities in asyncSequence(for: viewModel.searchCityResult) {
+            self?.state.searchResults = cities
+          }
+        } catch {
+          // KMP flow observation ended unexpectedly.
+        }
+      }
+    )
   }
 
-  init() {
-    initialiseViewModel()
-    observeSearch()
-    observeIsLoading()
-    observeSearchResults()
-    observeError()
+  deinit {
+    searchTask?.cancel()
+    observationTasks.forEach { $0.cancel() }
   }
 }

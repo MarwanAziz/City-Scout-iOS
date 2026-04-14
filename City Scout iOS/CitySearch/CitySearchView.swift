@@ -8,10 +8,16 @@ import SwiftUI
 import CityScoutShared
 
 struct CitySearchView: View {
-  @StateObject var viewModel = CitySearchViewModelWrapper()
+  @StateObject private var store = SearchCityStore()
 
   private var searchTextField: some View {
-    TextField("Search for a city", text: $viewModel.searchText)
+    TextField(
+      "Search for a city",
+      text: Binding(
+        get: { store.state.query },
+        set: { store.setQuery($0) }
+      )
+    )
       .textFieldStyle(.plain)
       .padding(.horizontal, 14)
       .frame(minHeight: 44)
@@ -23,28 +29,34 @@ struct CitySearchView: View {
       .padding()
   }
 
+  @ViewBuilder
   private var resultView: some View {
-    if !(viewModel.isError ?? "").isEmpty,
-       !viewModel.searchText.isEmpty {
-      AnyView(
-        VStack {
-          Text(viewModel.isError ?? "")
-            .foregroundColor(.red)
-          Spacer()
+    if let error = store.state.errorMessage, !error.isEmpty, !store.state.query.isEmpty {
+      VStack {
+        Text(error)
+          .foregroundStyle(.red)
+        Button("Retry") {
+          store.retrySearch()
         }
-      )
+        .buttonStyle(.borderedProminent)
+        .padding(.top, 8)
+        Spacer()
+      }
+    } else if store.state.isLoading && store.state.searchResults.isEmpty {
+      VStack {
+        ProgressView("Searching...")
+        Spacer()
+      }
     } else {
-      AnyView(
-        List(viewModel.searchResults, id: \.self) { city in
-          NavigationLink(destination: CityWeatherView(city: city)) {
-            VStack(alignment: .leading) {
-              Text(city.name)
-              Text(city.country)
-                .font(.footnote)
-            }
+      List(store.state.searchResults, id: \.self) { city in
+        NavigationLink(destination: CityWeatherView(city: city)) {
+          VStack(alignment: .leading) {
+            Text(city.name)
+            Text(city.country)
+              .font(.footnote)
           }
         }
-      )
+      }
     }
   }
 

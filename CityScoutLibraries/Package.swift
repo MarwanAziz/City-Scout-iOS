@@ -15,7 +15,7 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/MarwanAziz/CityScoutShared.git",
-      exact: "1.0.3"
+      exact: "1.0.6"
     ),
     .package(
       url: "https://github.com/rickclephas/KMP-NativeCoroutines.git",
@@ -39,4 +39,3 @@ let package = Package(
     )
   ]
 )
-

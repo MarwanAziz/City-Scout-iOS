@@ -1,13 +1,13 @@
 {
-  "originHash" : "344cc48f09c81dec89dd87a1a1e26eb0379f2e61cf23f435bc6cf69c225b15f1",
+  "originHash" : "0132d08a9d19da32ccbe79743cce59536e3005accdeaabc654b86bfad058c23a",
   "pins" : [
     {
       "identity" : "cityscoutshared",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/MarwanAziz/CityScoutShared.git",
       "state" : {
-        "revision" : "d3ab7c45b661d5bb096e01f8884985aab373fe90",
-        "version" : "1.0.3"
+        "revision" : "d2cfe6872053315247654d8d84847a8abcc8fa2c",
+        "version" : "1.0.6"
       }
     },
     {
