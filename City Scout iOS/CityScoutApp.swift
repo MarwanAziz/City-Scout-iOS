@@ -9,6 +9,10 @@ import SwiftUI
 
 @main
 struct CityScoutApp: App {
+    init() {
+      _ = shareResource
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

@@ -6,6 +6,17 @@
 //
  import CityScoutShared
 
+public enum SharedResourcesError: LocalizedError {
+  case missingAPIKeys
+
+  public var errorDescription: String? {
+    switch self {
+    case .missingAPIKeys:
+      return "Missing API keys. Configure RAPID_API_KEY and WEATHER_API_KEY."
+    }
+  }
+}
+
 @MainActor
 public class SharedResources {
   public static let shared: SharedResources = SharedResources()
@@ -20,8 +31,7 @@ public class SharedResources {
 
   public func createSearchCityViewModel() throws -> SearchCityViewModel {
     guard let rapidApiKey, let weatherApiKey else {
-      // throw error Missing API keys
-      fatalError("Missing API keys")
+      throw SharedResourcesError.missingAPIKeys
     }
     let remote = RemoteKeys.shared
     remote.rapidApiKey = rapidApiKey
@@ -30,9 +40,9 @@ public class SharedResources {
     return CityScoutFactory.shared.creatSearchCityViewModel(remote: remoteKey)
   }
 
-  public func createCityViewModel() throws -> CityWeatherViewModel {
+  public func createCityWeatherViewModel() throws -> CityWeatherViewModel {
     guard let rapidApiKey, let weatherApiKey else {
-      fatalError("Missing API keys")
+      throw SharedResourcesError.missingAPIKeys
     }
     let remote = RemoteKeys.shared
     remote.rapidApiKey = rapidApiKey
