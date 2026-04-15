@@ -37,9 +37,9 @@ struct CityWeatherView: View {
         .padding()
 
       HStack(alignment: .top) {
-        WeatherMetricCard(systemImage: "drop", title: "HUMIDITY", value: viewModel.humidity)
-        WeatherMetricCard(systemImage: "wind", title: "WIND", value: viewModel.windSpeed)
-        WeatherMetricCard(systemImage: "eye", title: "VISIBILITY", value: viewModel.visibility)
+        WeatherMetricCard(systemImage: "drop", title: String(localized: "cityWeather.metric.humidity"), value: viewModel.humidity)
+        WeatherMetricCard(systemImage: "wind", title: String(localized: "cityWeather.metric.wind"), value: viewModel.windSpeed)
+        WeatherMetricCard(systemImage: "eye", title: String(localized: "cityWeather.metric.visibility"), value: viewModel.visibility)
       }
       .padding(.horizontal)
     }
@@ -48,7 +48,13 @@ struct CityWeatherView: View {
   private var forecastWeatherView: some View {
     VStack {
       let numberOfDays: Int = viewModel.forecasts.count
-      Text("\(numberOfDays)-DAY FORECAST")
+      Text(
+        String(
+          format: String(localized: "cityWeather.forecast.days.format"),
+          locale: .current,
+          numberOfDays
+        )
+      )
         .font(.body)
         .fontWeight(.bold)
         .foregroundStyle(.secondary)
@@ -83,9 +89,9 @@ struct CityWeatherView: View {
         .padding()
       forecastWeatherView
       Spacer()
-      Picker("Unit", selection: $isTemperatureInCelsius) {
-        Text("Celsius").tag(true)
-        Text("Fahrenheit").tag(false)
+      Picker("cityWeather.unitPickerLabel", selection: $isTemperatureInCelsius) {
+        Text("cityWeather.unit.celsius").tag(true)
+        Text("cityWeather.unit.fahrenheit").tag(false)
       }
       .pickerStyle(.menu)
       .padding()
@@ -103,7 +109,7 @@ struct CityWeatherView: View {
         if viewModel.isLoading {
           VStack {
             ProgressView {
-              Text("Loading...")
+              Text("cityWeather.loading")
             }
           }
         } else if let error = viewModel.error {
@@ -184,7 +190,13 @@ private struct ForecastDayCard: View {
           .foregroundStyle(.secondary)
       }
 
-      Text("💧\(humidity)")
+      Text(
+        String(
+          format: String(localized: "cityWeather.humidity.value.format"),
+          locale: .current,
+          humidity
+        )
+      )
         .font(.footnote)
         .foregroundStyle(.secondary)
     }

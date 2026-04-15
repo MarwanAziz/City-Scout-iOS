@@ -42,7 +42,7 @@ final class SearchCityStore: ObservableObject {
     do {
       viewModel = try factory()
     } catch {
-      state.errorMessage = "Missing or invalid app configuration."
+      state.errorMessage = String(localized: "errors.missingConfiguration")
     }
   }
 
@@ -70,7 +70,7 @@ final class SearchCityStore: ObservableObject {
 
   private func performSearch(with query: String) async {
     guard let viewModel else {
-      state.errorMessage = "Search is currently unavailable."
+      state.errorMessage = String(localized: "errors.searchUnavailable")
       return
     }
 

@@ -12,7 +12,7 @@ struct CitySearchView: View {
 
   private var searchTextField: some View {
     TextField(
-      "Search for a city",
+      "citySearch.placeholder",
       text: Binding(
         get: { store.state.query },
         set: { store.setQuery($0) }
@@ -35,7 +35,7 @@ struct CitySearchView: View {
       VStack {
         Text(error)
           .foregroundStyle(.red)
-        Button("Retry") {
+        Button("citySearch.retryButton") {
           store.retrySearch()
         }
         .buttonStyle(.borderedProminent)
@@ -44,7 +44,7 @@ struct CitySearchView: View {
       }
     } else if store.state.isLoading && store.state.searchResults.isEmpty {
       VStack {
-        ProgressView("Searching...")
+        ProgressView("citySearch.searching")
         Spacer()
       }
     } else {
@@ -65,7 +65,7 @@ struct CitySearchView: View {
       searchTextField
       resultView
     }
-    .navigationTitle("Search For a City")
+    .navigationTitle("citySearch.navigationTitle")
   }
 }
 

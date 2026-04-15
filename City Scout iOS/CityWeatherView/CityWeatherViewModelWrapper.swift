@@ -57,7 +57,7 @@ final class CityWeatherViewModelWrapper: ObservableObject {
     do {
       viewModel = try factory()
     } catch {
-      self.error = "Missing or invalid app configuration."
+      self.error = String(localized: "errors.missingConfiguration")
     }
   }
 
@@ -168,7 +168,7 @@ final class CityWeatherViewModelWrapper: ObservableObject {
   }
 
   func loadWeather(for city: SearchCityResult) async {
-    func showError(_ message: String = "Failed to load weather") {
+    func showError(_ message: String = String(localized: "errors.failedToLoadWeather")) {
       self.error = message
     }
 
