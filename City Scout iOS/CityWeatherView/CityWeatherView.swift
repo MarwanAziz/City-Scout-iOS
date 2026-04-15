@@ -97,19 +97,21 @@ struct CityWeatherView: View {
   }
 
   var body: some View {
-    VStack {
+    ScrollView {
+      VStack {
 
-      if viewModel.isLoading {
-        VStack {
-          ProgressView {
-            Text("Loading...")
+        if viewModel.isLoading {
+          VStack {
+            ProgressView {
+              Text("Loading...")
+            }
           }
+        } else if let error = viewModel.error {
+          Text(error)
+            .foregroundStyle(.red)
+        } else {
+          bodyView
         }
-      } else if let error = viewModel.error {
-        Text(error)
-          .foregroundStyle(.red)
-      } else {
-        bodyView
       }
     }
     .navigationTitle(city.name)
